@@ -6,24 +6,37 @@ use App\Http\Controllers\Auth\LoginController;
 
 Route::prefix('auth')->name('auth.')->group(function () {
 
-    // ================= REGISTER =================
-    Route::get('/register', [RegisterController::class, 'show'])
-        ->name('register');
+    /*
+    |--------------------------------------------------------------------------
+    | Guest Routes (Belum login)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('guest')->group(function () {
 
-    Route::post('/register', [RegisterController::class, 'store'])
-        ->name('register.store');
+        // Register
+        Route::controller(RegisterController::class)->group(function () {
+            Route::get('/register', 'show')->name('register');
+            Route::post('/register', 'store')->name('register.store');
+        });
 
+        // Login
+        Route::controller(LoginController::class)->group(function () {
+            Route::get('/login', 'show')->name('login');
+            Route::post('/login', 'authenticate')->name('login.store');
+        });
 
-    // ================= LOGIN =================
-    Route::get('/login', [LoginController::class, 'show'])
-        ->name('login');
+    });
 
-    Route::post('/login', [LoginController::class, 'authenticate'])
-        ->name('login.auth');
+    /*
+    |--------------------------------------------------------------------------
+    | Authenticated Routes (Sudah login)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('auth')->group(function () {
 
+        Route::post('/logout', [LoginController::class, 'logout'])
+            ->name('logout');
 
-    // ================= LOGOUT =================
-    Route::post('/logout', [LoginController::class, 'logout'])
-        ->name('logout');
+    });
 
 });

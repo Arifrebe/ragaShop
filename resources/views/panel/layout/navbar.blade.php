@@ -97,7 +97,7 @@
             </div>
         </li>
         <div class="nav-item">
-            <form action="" method="post">
+            <form action="{{ route('auth.logout') }}" method="post">
                 @csrf
                 <button type="submit" class="nav-link" 
                     style="background: none; border: none; box-shadow: none;">
