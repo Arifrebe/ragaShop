@@ -8,9 +8,14 @@ class Promo extends Model
 {
     protected $guarded = [];
 
-     protected $casts = [
+    protected $casts = [
         'start_date'   => 'datetime',
         'end_date'     => 'datetime',
         'is_active'    => 'boolean',
     ];
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }
