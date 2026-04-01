@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
-use App\Models\Order;
-use App\Models\Order_item;
 
 class ShopController extends Controller
 {
@@ -137,51 +135,78 @@ class ShopController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function processCheckout()
     {
-        //
+        // ⚠️ sementara dummy dulu (biar jalan tanpa ubah sistem teman kamu)
+        $cart = [
+            [
+                'product_id' => 1,
+                'price' => 100000,
+                'qty' => 1
+            ]
+        ];
+
+        $subtotal = 0;
+        foreach ($cart as $item) {
+            $subtotal += $item['price'] * $item['qty'];
+        }
+
+        // simpan order
+        $order = Order::create([
+            'user_id' => auth()->id(),
+            'invoice' => 'INV-' . time(),
+            'status' => 'pending',
+            'subtotal' => $subtotal,
+            'discount_amount' => 0,
+            'shipping_cost' => 0,
+            'grand_total' => $subtotal,
+        ]);
+
+        // simpan item
+        foreach ($cart as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $item['product_id'],
+                'quantity' => $item['qty'],
+                'price' => $item['price'],
+                'subtotal' => $item['price'] * $item['qty'],
+            ]);
+        }
+
+        // MIDTRANS
+        Config::$serverKey = config('midtrans.serverKey');
+        Config::$isProduction = false;
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $order->invoice,
+                'gross_amount' => (int) $order->grand_total,
+            ],
+        ];
+
+        $snapToken = Snap::getSnapToken($params);
+
+        return view('front.checkout', compact('snapToken'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function callback()
     {
-        //
-    }
+        $notif = new Notification();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $order = Order::where('invoice', $notif->order_id)->first();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        if (!$order) return;
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if ($notif->transaction_status == 'settlement') {
+            $order->status = 'paid';
+        } elseif ($notif->transaction_status == 'pending') {
+            $order->status = 'pending';
+        } elseif ($notif->transaction_status == 'expire') {
+            $order->status = 'expired';
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $order->save();
+
+        return response()->json(['status' => 'ok']);
     }
 }

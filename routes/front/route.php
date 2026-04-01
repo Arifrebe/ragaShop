@@ -14,6 +14,7 @@ Route::name('front.')->group(function () {
     Route::get('/cart', [ShopController::class, 'cart'])->name('cart');
     Route::get('/about', [AboutController::class, 'index'])->name('about');
     Route::get('/contact', [ContactUsController::class, 'index'])->name('contact');
+<<<<<<< HEAD
     Route::get('/checkout', [ShopController::class, 'checkout'])->name('checkout');
 
     Route::middleware('auth')->group(function () {
@@ -22,4 +23,9 @@ Route::name('front.')->group(function () {
 
         Route::post('/checkout/process', [ShopController::class, 'checkoutProcess'])->name('checkout.process');
     });
+=======
+
+    Route::post('/process-checkout', [ShopController::class, 'processCheckout']);
+    Route::post('/callback', [ShopController::class, 'callback']);
+>>>>>>> 91b92e1b8ebe839bd35056f9b9a3254367eed8c8
 });
