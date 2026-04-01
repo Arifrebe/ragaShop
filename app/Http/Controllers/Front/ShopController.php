@@ -1,21 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Panel;
+namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Order;
 
-class OrderController extends Controller
+class ShopController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $orders = Order::with('user', 'promo')->get();
-
-        return view('panel.orders.index', compact('orders'));
+        //
     }
 
     /**

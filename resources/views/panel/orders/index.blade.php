@@ -17,7 +17,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    
+                    @foreach ($orders as $order)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $order->user->name }}</td>
+                            <td>{{ $order->invoice }}</td>
+                            <td>Rp.{{ number_format($order->grand_total, 2, ',', '.') }}</td>
+                            <td>{{ $order->status }}</td>
+                            <td>
+                                
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
