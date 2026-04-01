@@ -8,26 +8,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
-            $table->id();
+        Schema::create('promos', function (Blueprint $table) {
+            $table->id(); // BIGINT UNSIGNED (WAJIB cocok dengan foreignId)
 
-            // Relasi
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('promo_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('code')->unique();
+            $table->enum('type', ['percentage', 'fixed']);
+            $table->integer('value');
+            $table->integer('min_purchase')->default(0);
 
-            // Data utama
-            $table->string('invoice')->unique();
-            $table->string('status');
+            $table->date('start_date');
+            $table->date('end_date');
 
-            // Keuangan
-            $table->decimal('subtotal', 15, 2);
-            $table->integer('discount_amount')->default(0);
-            $table->integer('shipping_cost')->default(0);
-            $table->integer('grand_total');
-
-            // Pengiriman
-            $table->string('shipping_courier');
-            $table->string('tracking_number')->nullable();
+            $table->boolean('is_active')->default(true);
 
             $table->timestamps();
         });
@@ -35,6 +27,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('promos');
     }
 };
