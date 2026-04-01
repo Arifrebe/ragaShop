@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Product;
 
 class HomeController extends Controller
 {
@@ -12,7 +13,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('front.home');
+        $selectedProducts = Product::inRandomOrder()->where('stock', '>', 0)->take(4)->get();
+        return view('front.home', compact('selectedProducts'));
     }
 
     /**
