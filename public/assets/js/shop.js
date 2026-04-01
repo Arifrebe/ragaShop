@@ -8,16 +8,17 @@ const formatRupiah = (angka) => {
 // Ambil data keranjang dari localStorage (atau gunakan data default jika kosong)
 const getCart = () => {
     let cart = localStorage.getItem('ragashop_cart');
-    if (!cart) {
-        // Data dummy awal agar keranjang tidak kosong saat dites
-        cart = [
-            { id: 1, name: "Whiskas Tuna Adult 1.2kg", price: 65000, qty: 1, img: "img/elements/g1.jpg" },
-            { id: 2, name: "Pedigree Beef 1.5kg", price: 82000, qty: 2, img: "img/elements/g2.jpg" }
-        ];
-        saveCart(cart);
-    } else {
-        cart = JSON.parse(cart);
-    }
+    // if (!cart) {
+    //     // Data dummy awal agar keranjang tidak kosong saat dites
+    //     cart = [
+    //         { id: 1, name: "Whiskas Tuna Adult 1.2kg", price: 65000, qty: 1, img: "img/elements/g1.jpg" },
+    //         { id: 2, name: "Pedigree Beef 1.5kg", price: 82000, qty: 2, img: "img/elements/g2.jpg" }
+    //     ];
+    //     saveCart(cart);
+    // } else {
+    //     cart = JSON.parse(cart);
+    // }
+    cart = JSON.parse(cart);
     return cart;
 };
 
