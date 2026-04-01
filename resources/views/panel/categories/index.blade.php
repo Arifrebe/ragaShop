@@ -21,27 +21,30 @@
                 </thead>
                 <tbody>
                     @foreach ($categories as $category)
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $category->name }}</td>
-                        <td> {{ $category->products_count }}</td>
-                        <td class="d-flex">
-                            <a href="{{ route('category.show', $category->slug) }}" class="btn btn-sm btn-primary">
-                                <i class="fa-regular fa-eye"></i>
-                            </a>
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $category->name }}</td>
+                            <td> {{ $category->products_count }}</td>
+                            <td class="d-flex">
+                                <a href="{{ route('category.show', $category->slug) }}" class="btn btn-sm btn-primary">
+                                    <i class="fa-regular fa-eye"></i>
+                                </a>
 
-                            <form action="{{ route('category.destroy', $category->slug) }}" method="POST" class="mx-1"
-                                onsubmit="confirmation(event)">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-sm btn-danger" title="Hapus">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </form>
+                                <form action="{{ route('category.destroy', $category->slug) }}" method="POST"
+                                    class="mx-1" onsubmit="confirmation(event)">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger" title="Hapus">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
 
-                            <a href="{{ route('category.edit', $category->slug) }}" class="btn btn-sm btn-warning" title="Edit">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </a>
-                        </td>
+                                <a href="{{ route('category.edit', $category->slug) }}" class="btn btn-sm btn-warning"
+                                    title="Edit">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
