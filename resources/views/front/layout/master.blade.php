@@ -43,12 +43,6 @@
             padding: 15px 0 !important;
         }
 
-        .main-menu ul li a:hover,
-        .main-menu ul li a.active {
-            color: #ffe5e0 !important;
-            font-weight: 700;
-        }
-
         .header-btn {
             padding: 6px 16px !important;
             font-size: 13px !important;
@@ -141,7 +135,7 @@
                             <div class="search_icon d-flex align-items-center justify-content-end">
                                 <a href="{{ route('front.cart') }}"
                                     class="text-white mr-4 text-decoration-none cart-icon-link">
-                                    <i class="ti-shopping-cart"></i> <span id="nav-cart-count">(0)</span>
+                                    <i class="ti-shopping-cart"></i> <span id="nav-cart-count" class="cart-count">(0)</span>
                                 </a>
                                 @guest
                                     <!-- Belum login -->
@@ -153,7 +147,7 @@
 
                                 @auth
                                     <!-- Sudah login -->
-                                    <span class="text-white mr-2">{{ auth()->user()->name }}</span>
+                                    <a href="{{ route('front.profile.index') }}" class="text-white mr-2">{{ auth()->user()->name }}</a>
 
                                     <form action="{{ route('auth.logout') }}" method="POST" style="display:inline;">
                                         @csrf
@@ -175,7 +169,7 @@
         @yield('content')
     </div>
 
-    <footer class="footer bg-dark text-white pt-4 pb-4">
+    <footer class="footer bg-dark text-white pt-2 pb-2">
         <div class="container text-center">
             <p class="m-0 text-white-50" style="font-size: 13px;">Copyright &copy; {{ date('Y') }} ragaShop Pets.
             </p>
@@ -187,6 +181,101 @@
     <script src="{{ asset('assets/js/jquery.slicknav.min.js') }}"></script>
     <script src="{{ asset('assets/js/main.js') }}"></script>
     <script src="{{ asset('assets/js/shop.js') }}"></script> @yield('custom_js')
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if(session('success'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{!! session('success') !!}',
+                showConfirmButton: true,
+                confirmButtonColor: '#ff3500' // Sesuaikan dengan warna tema Anda
+            });
+        });
+    </script>
+    @endif
+
+    @if(session('error'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{!! session('error') !!}',
+                confirmButtonColor: '#ff3500'
+            });
+        });
+    </script>
+    @endif
+
+    <script>
+        function updateCartBadge() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let totalItems = 0;
+            cart.forEach(item => {
+                let qty = parseInt(item.quantity);
+                if (!isNaN(qty)) totalItems += qty;
+            });
+
+            let badgeElements = document.querySelectorAll('#cart-badge, .cart-count');
+            badgeElements.forEach(el => {
+                el.innerText = totalItems;
+            });
+        }
+
+        function addToCart(id, name, price, quantity = 1) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            let parsedQty = parseInt(quantity);
+            if (isNaN(parsedQty) || parsedQty <= 0) parsedQty = 1; 
+
+            let parsedPrice = parseInt(price);
+            if (isNaN(parsedPrice)) parsedPrice = 0;
+            
+            let existingItemIndex = cart.findIndex(item => item.id == id);
+            
+            if (existingItemIndex !== -1) {
+                cart[existingItemIndex].quantity += parsedQty;
+            } else {
+                cart.push({ id: id, name: name, price: parsedPrice, quantity: parsedQty });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartBadge();
+            
+            // 👇 PERUBAHAN DI SINI: Menggunakan SweetAlert2 Toast 👇
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: name + ' ditambahkan ke keranjang!',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+        }
+
+        // Eksekusi fungsi saat halaman dimuat
+        document.addEventListener("DOMContentLoaded", updateCartBadge);
+    </script>
+
+    @if(session('clear_cart'))
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            localStorage.removeItem('cart');
+            if (typeof updateCartBadge === "function") {
+                updateCartBadge();
+            }
+        });
+    </script>
+    @endif
 </body>
 
 </html>

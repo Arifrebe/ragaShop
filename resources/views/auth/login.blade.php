@@ -1,29 +1,73 @@
-@extends('auth.layout')
+<!doctype html>
+<html class="no-js" lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Masuk - ragaShop Pets</title>
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    <style>
+        :root { --primary-color: #ff3500; }
+        body { background: #f8f9fa; font-family: "Poppins", sans-serif; }
+        .btn-primary-rs { background: var(--primary-color); color: #fff; border: none; padding: 10px; border-radius: 5px; font-weight: 600; width: 100%; transition: 0.3s; }
+        .btn-primary-rs:hover { background: #e63000; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; }
+        .auth-card { border-radius: 15px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+        <div class="card auth-card" style="width: 100%; max-width: 400px;">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <a href="{{ url('/') }}" class="text-decoration-none">
+                        <h2 style="font-weight: 800; color: var(--primary-color); font-size: 28px;">ragaShop Pets.</h2>
+                    </a>
+                    <h5 class="mt-3 text-dark font-weight-bold">Selamat Datang</h5>
+                    <p class="text-muted">Masuk ke akun Anda</p>
+                </div>
 
-@section('content')
-<h2>Login</h2>
+                @if(session('error'))
+                    <div class="alert alert-danger" style="font-size: 14px;">
+                        {{ session('error') }}
+                    </div>
+                @endif
 
-@if(session('success'))
-    <p style="color:green">{{ session('success') }}</p>
-@endif
+                <form action="{{ route('auth.login') }}" method="POST">
+                    @csrf
+                    <div class="form-group mb-3">
+                        <label class="text-dark font-weight-bold" style="font-size: 14px;">Email</label>
+                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="email@contoh.com" value="{{ old('email') }}" required autofocus>
+                        @error('email')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                    <div class="form-group mb-4">
+                        <label class="text-dark font-weight-bold" style="font-size: 14px;">Kata Sandi</label>
+                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="******" required>
+                        @error('password')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                    
+                    <div class="form-group mb-4 text-left">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                            <label class="custom-control-label text-muted" for="remember" style="font-size: 13px;">Ingat Saya</label>
+                        </div>
+                    </div>
 
-<form action="{{ route('auth.login.store') }}" method="POST">
-    @csrf
-
-    <input type="email" name="email" placeholder="Email" value="{{ old('email') }}">
-    @error('email')
-        <div class="error">{{ $message }}</div>
-    @enderror
-
-    <input type="password" name="password" placeholder="Password">
-    @error('password')
-        <div class="error">{{ $message }}</div>
-    @enderror
-
-    <button type="submit">Login</button>
-</form>
-
-<div class="link">
-    Belum punya akun? <a href="{{ route('auth.register') }}">Register</a>
-</div>
-@endsection
+                    <button type="submit" class="btn-primary-rs">Masuk</button>
+                </form>
+                <div class="text-center mt-4">
+                    <p class="text-muted m-0" style="font-size: 14px;">Belum punya akun? <a href="{{ route('auth.register') }}" class="font-weight-bold" style="color: var(--primary-color);">Daftar</a></p>
+                    <a href="{{ url('/') }}" class="text-muted d-block mt-3" style="font-size:14px;">Kembali ke Beranda</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

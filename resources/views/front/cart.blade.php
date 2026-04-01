@@ -1,60 +1,103 @@
 @extends('front.layout.master')
-@section('title', 'Keranjang Belanja - ragaShop Pets')
-
-@section('custom_css')
-<style>
-    .cart-item { background: #fff; border-radius: 10px; padding: 15px; margin-bottom: 15px; border: 1px solid #eee; display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-    .cart-img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; margin-right: 15px; background: #fdfdfd; border: 1px solid #f0f0f0; }
-    .cart-title { font-weight: 600; font-size: 15px; margin: 0 0 5px 0; color: #333; }
-    .cart-price { color: var(--primary-color); font-weight: 700; font-size: 16px; margin: 0; }
-    .qty-input { width: 60px; text-align: center; border: 1px solid #ddd; border-radius: 5px; padding: 5px; }
-    .btn-remove { color: #dc3545; background: none; border: none; font-size: 18px; cursor: pointer; transition: 0.2s; }
-    .btn-remove:hover { color: #a71d2a; transform: scale(1.1); }
-    
-    .summary-card { background: #fff; border-radius: 10px; padding: 25px; border: 1px solid #eee; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-    .btn-checkout { background: var(--primary-color); color: #fff; border: none; width: 100%; padding: 12px; border-radius: 5px; font-weight: 600; transition: 0.3s; display:block;}
-    .btn-checkout:hover { background: #e63000; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; color:#fff; text-decoration:none;}
-
-    @media (max-width: 768px) {
-        .cart-item { flex-direction: column; align-items: flex-start; position: relative; }
-        .cart-img { margin-bottom: 10px; }
-        .cart-details { width: 100%; }
-        .cart-controls { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
-        .btn-remove { position: absolute; top: 15px; right: 15px; }
-    }
-</style>
-@endsection
+@section('title', 'Keranjang Belanja - ragaShop')
 
 @section('content')
-<div class="container pt-4 pt-md-5 pb-5 mt-2">
-    <h3 class="font-weight-bold mb-4">Keranjang Belanja</h3>
+<div class="container mt-5 mb-5">
     <div class="row">
-        <div class="col-lg-8 mb-4">
-            <div id="cart-items-container"></div>
-            
-            <div class="mt-3">
-                <a href="{{ route('front.products') }}" class="text-muted" style="font-size: 14px;"><i class="ti-arrow-left"></i> Lanjut Belanja</a>
+        <div class="col-12">
+            <h2 class="mb-4">Keranjang Belanja</h2>
+        </div>
+        <div class="col-lg-8">
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Produk</th>
+                            <th>Harga</th>
+                            <th width="150px">Kuantitas</th>
+                            <th>Subtotal</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-container">
+                        </tbody>
+                </table>
             </div>
         </div>
-
         <div class="col-lg-4">
-            <div class="summary-card">
-                <h4 class="font-weight-bold mb-4 border-bottom pb-3">Ringkasan</h4>
-                <div class="d-flex justify-content-between mb-3 text-muted">
-                    <span id="cart-count">Subtotal (0 Barang)</span>
-                    <span id="cart-subtotal">Rp 0</span>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Ringkasan Belanja</h4>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Total:</span>
+                        <strong id="cart-total" style="color: #ff3500">Rp 0</strong>
+                    </div>
+                    <a href="{{ url('/checkout') }}" class="btn w-100" style="background-color: #ff3500; color: #fff">Lanjut ke Checkout</a>
                 </div>
-                <div class="d-flex justify-content-between mb-3 text-muted border-bottom pb-3">
-                    <span>Estimasi Ongkir</span>
-                    <span>Dihitung di Checkout</span>
-                </div>
-                <div class="d-flex justify-content-between mb-4">
-                    <span class="font-weight-bold" style="font-size: 18px;">Total</span>
-                    <span class="font-weight-bold" style="color: var(--primary-color); font-size: 18px;" id="cart-total">Rp 0</span>
-                </div>
-                <a href="{{ route('front.checkout') }}" class="btn-checkout text-center text-white">Lanjut ke Checkout</a>
             </div>
         </div>
     </div>
 </div>
+@endsection
+
+@section('custom_js')
+<script>
+    // Load keranjang dari localStorage
+    function loadCart() {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let container = document.getElementById('cart-container');
+        let totalEl = document.getElementById('cart-total');
+        
+        container.innerHTML = '';
+        let total = 0;
+
+        if (cart.length === 0) {
+            container.innerHTML = '<tr><td colspan="5" class="text-center py-4">Keranjang Anda masih kosong.</td></tr>';
+        } else {
+            cart.forEach((item, index) => {
+                let subtotal = item.price * item.quantity;
+                total += subtotal;
+                
+                // Menyesuaikan .cart-item dengan class tambahan agar tabel rapi
+                container.innerHTML += `
+                    <tr class="cart-item align-middle">
+                        <td class="text-left">${item.name}</td>
+                        <td>Rp ${parseInt(item.price).toLocaleString('id-ID')}</td>
+                        <td>
+                            <input type="number" class="form-control text-center" value="${item.quantity}" min="1" onchange="updateQty(${index}, this.value)">
+                        </td>
+                        <td class="font-weight-bold">Rp ${subtotal.toLocaleString('id-ID')}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="removeItem(${index})">
+                                <i class="fa fa-trash"></i> Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        totalEl.innerHTML = `Rp ${total.toLocaleString('id-ID')}`;
+    }
+
+    // Update jumlah item
+    function updateQty(index, qty) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        if (qty > 0) {
+            cart[index].quantity = parseInt(qty);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart(); // Render ulang
+        }
+    }
+
+    // Hapus item dari keranjang
+    function removeItem(index) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        loadCart(); // Render ulang
+    }
+
+    // Eksekusi loadCart saat halaman dimuat
+    document.addEventListener("DOMContentLoaded", loadCart);
+</script>
 @endsection

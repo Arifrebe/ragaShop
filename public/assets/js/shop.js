@@ -56,7 +56,7 @@ const renderCartPage = () => {
             container.innerHTML += `
                 <div class="cart-item">
                     <img src="${item.img}" alt="${item.name}" class="cart-img">
-                    <div class="cart-details flex-grow-1">
+                    <div class="cart-details grow">
                         <h4 class="cart-title">${item.name}</h4>
                         <p class="cart-price mt-1">${formatRupiah(item.price)}</p>
                     </div>

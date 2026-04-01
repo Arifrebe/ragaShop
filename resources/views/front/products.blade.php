@@ -48,13 +48,7 @@
 
                             @if($product->stock > 0)
                                 <button class="btn-cart-small"
-                                    onclick="addToCart(
-                                        {{ $product->id }},
-                                        '{{ $product->name }}',
-                                        {{ $product->price }},
-                                        '{{ $product->image ? asset('storage/' . $product->image) : asset('assets/img/default.png') }}',
-                                        this
-                                    )">
+                                    onclick="addToCart('{{ $product->id }}', '{{ $product->name }}', '{{ (int) $product->price }}', 1)">
                                     + Keranjang
                                 </button>
                             @else
