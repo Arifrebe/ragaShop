@@ -3,6 +3,7 @@
 use App\Http\Controllers\Panel\ProductController;
 use App\Http\Controllers\Panel\CategoryController;
 use App\Http\Controllers\Panel\PromoController;
+use App\Http\Controllers\Panel\OrderController;
 
 Route::get('/', function () {
     return view('panel.dashboard');
@@ -39,4 +40,15 @@ Route::prefix('promo')->name('promo.')->group(function() {
     Route::post('/store', [PromoController::class, 'store'])->name('store');
     Route::put('/update/{code}', [PromoController::class, 'update'])->name('update');
     Route::delete('/destroy/{code}', [PromoController::class, 'destroy'])->name('destroy');
+});
+
+Route::prefix('order')->name('order.')->group(function() {
+    Route::get('/', [OrderController::class, 'index'])->name('index');
+    Route::get('/create', [OrderController::class, 'create'])->name('create');
+    Route::get('/edit/{code}', [OrderController::class, 'edit'])->name('edit');
+    Route::get('/show/{code}', [OrderController::class, 'show'])->name('show');
+
+    Route::post('/store', [OrderController::class, 'store'])->name('store');
+    Route::put('/update/{code}', [OrderController::class, 'update'])->name('update');
+    Route::delete('/destroy/{code}', [OrderController::class, 'destroy'])->name('destroy');
 });

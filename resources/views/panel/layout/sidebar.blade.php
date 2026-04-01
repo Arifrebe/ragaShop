@@ -45,16 +45,7 @@
                         <p>Beranda</p>
                     </a>
                 </li>
-
-                <!-- Produk -->
-                <li class="nav-item">
-                    <a href="{{ route('product.index') }}"
-                        class="nav-link {{ request()->routeIs('product.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-box-open"></i>
-                        <p>Produk</p>
-                    </a>
-                </li>
-
+                
                 <!-- Kategori -->
                 <li class="nav-item">
                     <a href="{{ route('category.index') }}"
@@ -64,12 +55,30 @@
                     </a>
                 </li>
 
+                <!-- Produk -->
+                <li class="nav-item">
+                    <a href="{{ route('product.index') }}"
+                        class="nav-link {{ request()->routeIs('product.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-box-open"></i>
+                        <p>Produk</p>
+                    </a>
+                </li
+
                 <!-- Promo -->
                 <li class="nav-item">
                     <a href="{{ route('promo.index') }}"
                         class="nav-link {{ request()->routeIs('promo.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-percent"></i>
                         <p>Promo</p>
+                    </a>
+                </li>
+
+                <!-- Order -->
+                <li class="nav-item">
+                    <a href="{{ route('order.index') }}"
+                        class="nav-link {{ request()->routeIs('order.*') ? 'active' : '' }}">
+                        <i class="nav-icon fa-solid fa-cart-arrow-down"></i>
+                        <p>Order</p>
                     </a>
                 </li>
             </ul>

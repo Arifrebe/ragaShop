@@ -79,3 +79,8 @@ Breadcrumbs::for('promo.edit', function (Generator $trail) {
         $trail->push($promo->code, route('promo.edit', $promo->code));
     }
 });
+
+// Order
+Breadcrumbs::for('order.index', function (Generator  $trail) {
+    $trail->push('Order', route('order.index'));
+});
