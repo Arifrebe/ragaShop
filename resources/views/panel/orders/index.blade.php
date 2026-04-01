@@ -24,8 +24,30 @@
                             <td>{{ $order->invoice }}</td>
                             <td>Rp.{{ number_format($order->grand_total, 2, ',', '.') }}</td>
                             <td>{{ $order->status }}</td>
-                            <td>
-                                
+                            <td class="d-flex">
+                                @if ($order->status == 'pending')
+                                    <!-- Tombol Bayar -->
+                                    <form action="{{ route('order.orders.updateStatus', $order->id) }}" method="POST"
+                                        class="mx-1">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="status" value="paid">
+                                        <button class="btn btn-sm btn-success" title="Bayar">
+                                            Bayar
+                                        </button>
+                                    </form>
+
+                                    <!-- Tombol Gagal / Batal -->
+                                    <form action="{{ route('order.orders.updateStatus', $order->id) }}" method="POST"
+                                        class="mx-1">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="status" value="fail">
+                                        <button class="btn btn-sm btn-danger" title="Gagal">
+                                            Gagal
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

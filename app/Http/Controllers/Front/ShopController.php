@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
+use App\Models\Order;
+use App\Models\Order_item;
 
 class ShopController extends Controller
 {
@@ -31,7 +33,7 @@ class ShopController extends Controller
     {
         // 1. Cek apakah user sudah login
         if (!auth()->check()) {
-            return redirect()->route('login')->with('error', 'Silakan masuk terlebih dahulu untuk melakukan checkout.');
+            return redirect()->route('auth.login')->with('error', 'Silakan masuk terlebih dahulu untuk melakukan checkout.');
         }
 
         $user = auth()->user();

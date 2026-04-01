@@ -13,7 +13,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('user', 'promo')->get();
+        $orders = Order::with('user', 'promo')->latest()->get();
 
         return view('panel.orders.index', compact('orders'));
     }
@@ -24,6 +24,21 @@ class OrderController extends Controller
     public function create()
     {
         //
+    }
+
+    public function updateStatus(Request $request, Order $order)
+    {
+        $status = $request->status;
+
+        $allowed = ['paid', 'fail', 'pending', 'shipped', 'completed'];
+        if (!in_array($status, $allowed)) {
+            return back()->with('error', 'Status tidak valid');
+        }
+
+        $order->status = $status;
+        $order->save();
+
+        return back()->with('success', 'Status berhasil diubah');
     }
 
     /**
