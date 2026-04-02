@@ -13,7 +13,18 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::with('user', 'promo')->latest()->get();
+        $orders = Order::with('user', 'promo')
+            ->orderByRaw("
+                CASE 
+                    WHEN status = 'pending' THEN 1
+                    WHEN status = 'paid' THEN 2
+                    WHEN status = 'shipped' THEN 3
+                    WHEN status = 'completed' THEN 4
+                    ELSE 5
+                END
+            ")
+            ->latest('created_at') // urut berdasarkan tanggal terbaru jika status sama
+            ->get();
 
         return view('panel.orders.index', compact('orders'));
     }

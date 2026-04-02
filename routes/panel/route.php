@@ -49,7 +49,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('panel')->group(function () {
         Route::get('/edit/{code}', [OrderController::class, 'edit'])->name('edit');
         Route::get('/show/{code}', [OrderController::class, 'show'])->name('show');
 
-        Route::post('/order}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::post('/store', [OrderController::class, 'store'])->name('store');
         Route::put('/update/{code}', [OrderController::class, 'update'])->name('update');
         Route::delete('/destroy/{code}', [OrderController::class, 'destroy'])->name('destroy');

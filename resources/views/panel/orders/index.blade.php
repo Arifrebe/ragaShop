@@ -33,7 +33,7 @@
                                         @method('PUT')
                                         <input type="hidden" name="status" value="paid">
                                         <button class="btn btn-sm btn-success" title="Bayar">
-                                            Bayar
+                                            Dibayar
                                         </button>
                                     </form>
 
